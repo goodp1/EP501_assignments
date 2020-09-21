@@ -38,20 +38,14 @@ LT_solution = forsub(L,bL);
 LT_Final = LT_solution(:,9); %results
 
 %Matlab built in function 
-LT_matlab = L\bL;
+matlab = L\bL;
 
 %Print results
-disp('-----------------Lower-Triangle System-----------------')
-disp(' ')
-
 disp('Initial Matrix L|bL = ')
 disp(cat(2,L,bL)) %initial matrix
 
 disp('LT_My_Results = ')
 disp(LT_Final)
-
-disp('MatLab_Results = ')
-disp(LT_matlab) %matlab built in results
 
 
 

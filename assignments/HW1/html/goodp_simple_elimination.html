@@ -1,0 +1,275 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>goodp_simple_elimination</title><meta name="generator" content="MATLAB 9.8"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-09-20"><meta name="DC.source" content="goodp_simple_elimination.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">%This script preformes simple elimination for linear alegrbraic matrixcies</span>
+<span class="comment">%Created by: Patrick Good with example code from Dr. Z</span>
+
+<span class="comment">%Clear the workspace</span>
+clc
+clear
+
+<span class="comment">%Load test problem 1</span>
+load(<span class="string">'testproblem.mat'</span>)
+
+<span class="comment">%Forward substitution function</span>
+Awork = forsub(A,b);
+
+<span class="comment">%Back substitution function</span>
+Final = backsub(Awork);
+
+<span class="comment">%Matlab built in function</span>
+matlab = A\b;
+
+<span class="comment">%print results</span>
+disp(<span class="string">'Initial Matrix A|B = '</span>)
+disp(cat(2,A,b)) <span class="comment">%initial matrix</span>
+
+disp(<span class="string">'My_Results = '</span>)
+disp(Final) <span class="comment">%foward and back sub results</span>
+
+disp(<span class="string">'MatLab_Results = '</span>)
+disp(matlab) <span class="comment">%matlab built in results</span>
+
+<span class="comment">%----------------------------------------------------------------------</span>
+<span class="comment">%Lower Triangle Test Problem</span>
+
+<span class="comment">%Load lower triangle test problem</span>
+load(<span class="string">'lowertriang_testproblem.mat'</span>)
+
+<span class="comment">%Forward substitution</span>
+LT_solution = forsub(L,bL);
+LT_Final = LT_solution(:,9); <span class="comment">%results</span>
+
+<span class="comment">%Matlab built in function</span>
+LT_matlab = L\bL;
+
+<span class="comment">%Print results</span>
+disp(<span class="string">'-----------------Lower-Triangle System-----------------'</span>)
+disp(<span class="string">' '</span>)
+
+disp(<span class="string">'Initial Matrix L|bL = '</span>)
+disp(cat(2,L,bL)) <span class="comment">%initial matrix</span>
+
+disp(<span class="string">'LT_My_Results = '</span>)
+disp(LT_Final)
+
+disp(<span class="string">'MatLab_Results = '</span>)
+disp(LT_matlab) <span class="comment">%matlab built in results</span>
+</pre><pre class="codeoutput">Initial Matrix A|B = 
+  Columns 1 through 7
+
+   -1.0149   -2.1321    2.1778   -0.2730   -0.7841   -0.4677   -0.2841
+   -0.4711    1.1454    1.1385    1.5763   -1.8054   -0.1249   -0.0867
+    0.1370   -0.6291   -2.4969   -0.4809    1.8586    1.4790   -1.4694
+   -0.2919   -1.2038    0.4413    0.3275   -0.6045   -0.8608    0.1922
+    0.3018   -0.2539   -1.3981    0.6647    0.1034    0.7847   -0.8223
+    0.3999   -1.4286   -0.2551    0.0852    0.5632    0.3086   -0.0942
+   -0.9300   -0.0209    0.1644    0.8810    0.1136   -0.2339    0.3362
+   -0.1768   -0.5607    0.7477    0.3232   -0.9047   -1.0570   -0.9047
+
+  Columns 8 through 9
+
+   -0.2883  -10.8600
+    0.3501    3.9577
+   -1.8359  -17.3415
+    1.0360    1.3800
+    2.4245   17.1229
+    0.9594    8.8013
+   -0.3158    2.0375
+    0.4286  -11.5312
+
+My_Results = 
+    1.0000
+    2.0000
+    3.0000
+    4.0000
+    5.0000
+    6.0000
+    7.0000
+    8.0000
+
+MatLab_Results = 
+    1.0000
+    2.0000
+    3.0000
+    4.0000
+    5.0000
+    6.0000
+    7.0000
+    8.0000
+
+-----------------Lower-Triangle System-----------------
+ 
+Initial Matrix L|bL = 
+  Columns 1 through 7
+
+    1.0000         0         0         0         0         0         0
+    0.3885    1.0000         0         0         0         0         0
+    0.5040   -0.8461    1.0000         0         0         0         0
+   -1.2484    1.8781   -1.5861    1.0000         0         0         0
+   -0.8977    0.5929   -1.5219   -0.6058    1.0000         0         0
+   -1.7325    1.1953   -3.0180   -0.2596    0.3782    1.0000         0
+   -4.1011    1.6584   -2.8602    0.7259   -1.5369    6.9610    1.0000
+   -2.8207    2.0153   -4.2019    0.0744    0.1021    3.5430    0.3983
+
+  Columns 8 through 9
+
+         0    1.0000
+         0    3.3885
+         0    2.9657
+         0    3.4554
+         0   -1.9692
+         0   -0.6498
+         0   67.3931
+    1.0000   42.8073
+
+LT_My_Results = 
+    1.0000
+    3.0000
+    5.0000
+    7.0000
+    9.0000
+   11.0000
+   13.0000
+   15.0000
+
+MatLab_Results = 
+    1.0000
+    3.0000
+    5.0000
+    7.0000
+    9.0000
+   11.0000
+   13.0000
+   15.0000
+
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2020a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%This script preformes simple elimination for linear alegrbraic matrixcies 
+%Created by: Patrick Good with example code from Dr. Z
+
+%Clear the workspace
+clc
+clear
+
+%Load test problem 1
+load('testproblem.mat')
+
+%Forward substitution function
+Awork = forsub(A,b);
+
+%Back substitution function
+Final = backsub(Awork);
+
+%Matlab built in function 
+matlab = A\b;
+
+%print results
+disp('Initial Matrix A|B = ')
+disp(cat(2,A,b)) %initial matrix
+
+disp('My_Results = ')
+disp(Final) %foward and back sub results
+
+disp('MatLab_Results = ')
+disp(matlab) %matlab built in results
+
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%Lower Triangle Test Problem 
+
+%Load lower triangle test problem 
+load('lowertriang_testproblem.mat')
+
+%Forward substitution 
+LT_solution = forsub(L,bL);
+LT_Final = LT_solution(:,9); %results
+
+%Matlab built in function 
+LT_matlab = L\bL;
+
+%Print results
+disp('REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-Lower-Triangle SystemREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-')
+disp(' ')
+
+disp('Initial Matrix L|bL = ')
+disp(cat(2,L,bL)) %initial matrix
+
+disp('LT_My_Results = ')
+disp(LT_Final)
+
+disp('MatLab_Results = ')
+disp(LT_matlab) %matlab built in results
+
+
+
+
+
+
+##### SOURCE END #####
+--></body></html>
