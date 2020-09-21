@@ -3,6 +3,7 @@ function x=backsub(A)
 % This function performs back substitution on an upper triangular matrix that has
 % been modified by concatenating the RHS of the system.  
 % Note that B is assumed to be upper triangular at this point.
+% Sourced from Dr. Z many thanks!
 
 
 n=size(A,1);                   %number of unknowns in the system
