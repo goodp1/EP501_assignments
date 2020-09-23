@@ -6,7 +6,10 @@ clc
 clear
 
 %Load test problem 1
-load('testproblem.mat')
+%load('testproblem.mat')
+
+A = [80 -20 -20; -20 40 -20; -20 -20 130];
+b = [0; 1; 0];
 
 %Forward substitution function
 Awork = forsub(A,b);
@@ -52,8 +55,4 @@ disp(LT_Final)
 
 disp('MatLab_Results = ')
 disp(LT_matlab) %matlab built in results
-
-
-
-
 
