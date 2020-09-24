@@ -9,7 +9,8 @@ clear
 %load('testproblem.mat')
 
 A = [80 -20 -20; -20 40 -20; -20 -20 130];
-b = [0; 1; 0];
+%b = [0; 1; 0];
+b = [1 0 0; 0 1 0; 0 0 1];
 
 %Forward substitution function
 Awork = forsub(A,b);

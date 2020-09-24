@@ -5,7 +5,7 @@ A = [80 -20 -20; -20 40 -20; -20 -20 130]
 b = [1 0 0; 0 1 0; 0 0 1]
 
 % %size b
-[~ ,c] = size(b);
+[~,c] = size(b);
 % 
 % %split b
 % B = cell(1,c); %reallacating for effeciency 
