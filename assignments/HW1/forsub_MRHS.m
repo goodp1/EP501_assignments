@@ -1,38 +1,37 @@
-function Out = forsub_MRHS(A,b)
+function Out = forelim_MRHS(A,b,c)
 
-%This function preforms foroawd substitution 
-%Created by Patrick Good based on Dr. Zettergren's simple elimination
+% This function preforms foroawd substitution
+% Created by Patrick Good based on Dr. Zettergren's simple elimination
 %example cdoe
+% Inputs: forsub_MRHS('A matrix', 'b matrix', 'size of b matrix')
 
-%size b
-[~,c] = size(b);
 
-%split b
-B = cell(1,c); %reallacating for effeciency 
+%split b into seperate collums for the forword elimination 
+B = cell(1,c); %reallacating for effeciency
 for n=1:c
-    
     B{n} = b(:,n);
-    
 end
-Out = cell(1,c);
-for n=1:c
 
-%Illustrate vanilla forward elimination
-nref=length(B{n});                %system size for reference problem
-
-%note that the elimination procedure coded below modifies the matrix B
-Awork=cat(2,A,B{n});          %This is our working version of the matrix used to perform elimination (i.e. it will be modified)
-for ir1=2:nref                                           %loop over rows from 2 to n performing elimination, this index marks what row we are starting the elimination from (i.e. using) for this particular column
-    for ir2=ir1:nref                                     %this index marks the present position where elimination is being performed - i.e. where we are applying the elementary row operations
-        fact=Awork(ir2,ir1-1);                                    %multiplier of the variable we are attempting to eliminate, its ir-1 column of this row
-        Awork(ir2,:)=Awork(ir2,:)-fact/Awork(ir1-1,ir1-1).*Awork(ir1-1,:); 
-        %disp('Awork = ')
-        %disp(Awork)%subtract off previous row modified by a factor that eliminates the ir-1 column term in this row (so it has only super-diagonal elements), this is a little bit wasteful as it uses entire row...
+%preform forword elimination 
+Out = cell(1,c); %reallacating for effeciency
+for n=1:c %loop for each b collum 
+    
+    %set up system size based on length of b 
+    nref=length(B{n}); 
+    
+    %concat A and b into 1 matrix
+    Awork=cat(2,A,B{n});         
+    for ir1=2:nref   %loop over rows starting at row 2 
+        for ir2=ir1:nref %loop to apply row operations
+            %multiplier of the variable we are attempting to eliminate          
+            fact=Awork(ir2,ir1-1); %its ir-1 column of this row
+            %subtract previous row from current row times the factor  
+            Awork(ir2,:)=Awork(ir2,:)-fact/Awork(ir1-1,ir1-1).*Awork(ir1-1,:);   
+        end %for
     end %for
+    
+    Out{n} = Awork;
+    
 end %for
 
-Out{n} = Awork;
-
-end
-
-end
+end %function
