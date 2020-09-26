@@ -1,6 +1,6 @@
 %Project 1
 %Problem 2 
-%Parts b -> d
+%Parts a -> d
 %This script demos Gauss-Jordan Elimination 
 %Created by: Patrick Good 
 
