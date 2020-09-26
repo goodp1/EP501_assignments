@@ -17,14 +17,13 @@ det_matlab = det(A);
 disp('Elimination with scaled pivoting on matrix:  ');
 disp(Amod(ord,:));
 xgauss=backsub(Amod(ord,:));
-disp('Gaussian elimination solution =  ');
+disp('Back substitution solution using Gaussian elimination result:  ');
 disp(xgauss);
 disp('Determinate = ')
 disp(detm)
-disp('Built-in MATLAB solution = ');
+disp('Built-in MATLAB solution');
 disp(xmat);
 disp('Matlab Determinate = ')
-disp(det_matlab)
 
 
 
