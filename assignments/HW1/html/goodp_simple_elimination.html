@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>goodp_simple_elimination</title><meta name="generator" content="MATLAB 9.8"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-09-20"><meta name="DC.source" content="goodp_simple_elimination.m"><style type="text/css">
+      --><title>goodp_simple_elimination</title><meta name="generator" content="MATLAB 9.8"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-09-25"><meta name="DC.source" content="goodp_simple_elimination.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -67,21 +67,26 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">%This script preformes simple elimination for linear alegrbraic matrixcies</span>
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">%Project 1</span>
+<span class="comment">%Problem 1</span>
+<span class="comment">%Parts a -&gt; d</span>
+<span class="comment">%This script preformes simple elimination for linear alegrbraic matrixcies</span>
 <span class="comment">%Created by: Patrick Good with example code from Dr. Z</span>
 
 <span class="comment">%Clear the workspace</span>
 clc
 clear
 
-<span class="comment">%Load test problem 1</span>
+<span class="comment">%Input Matrix</span>
 load(<span class="string">'testproblem.mat'</span>)
+<span class="comment">%A = [80 -20 -20; -20 40 -20; -20 -20 130];</span>
+<span class="comment">%b = [20; 20; 20];</span>
 
-<span class="comment">%Forward substitution function</span>
-Awork = forsub(A,b);
+<span class="comment">%Forward elimination function</span>
+Awork = forwordelim(A,b);
 
 <span class="comment">%Back substitution function</span>
-Final = backsub(Awork);
+Solution = backsub(Awork);
 
 <span class="comment">%Matlab built in function</span>
 matlab = A\b;
@@ -89,21 +94,19 @@ matlab = A\b;
 <span class="comment">%print results</span>
 disp(<span class="string">'Initial Matrix A|B = '</span>)
 disp(cat(2,A,b)) <span class="comment">%initial matrix</span>
-
 disp(<span class="string">'My_Results = '</span>)
-disp(Final) <span class="comment">%foward and back sub results</span>
-
+disp(Solution) <span class="comment">%foward and back sub results</span>
 disp(<span class="string">'MatLab_Results = '</span>)
 disp(matlab) <span class="comment">%matlab built in results</span>
 
-<span class="comment">%----------------------------------------------------------------------</span>
+<span class="comment">% ----------------------------------------------------------------------</span>
 <span class="comment">%Lower Triangle Test Problem</span>
 
 <span class="comment">%Load lower triangle test problem</span>
 load(<span class="string">'lowertriang_testproblem.mat'</span>)
 
-<span class="comment">%Forward substitution</span>
-LT_solution = forsub(L,bL);
+<span class="comment">%Forward elimination</span>
+LT_solution = forwordelim(L,bL);
 LT_Final = LT_solution(:,9); <span class="comment">%results</span>
 
 <span class="comment">%Matlab built in function</span>
@@ -112,15 +115,63 @@ LT_matlab = L\bL;
 <span class="comment">%Print results</span>
 disp(<span class="string">'-----------------Lower-Triangle System-----------------'</span>)
 disp(<span class="string">' '</span>)
-
 disp(<span class="string">'Initial Matrix L|bL = '</span>)
 disp(cat(2,L,bL)) <span class="comment">%initial matrix</span>
-
 disp(<span class="string">'LT_My_Results = '</span>)
 disp(LT_Final)
-
 disp(<span class="string">'MatLab_Results = '</span>)
 disp(LT_matlab) <span class="comment">%matlab built in results</span>
+
+<span class="comment">% functions</span>
+<span class="keyword">function</span> Out = forwordelim(A,b)
+
+<span class="comment">% This function preforms forword elimination</span>
+<span class="comment">% Created by Patrick Good based on Dr. Zettergren's simple elimination</span>
+<span class="comment">%example cdoe</span>
+<span class="comment">% Inputs: forwordelim('A matrix', 'b matrix')</span>
+
+<span class="comment">%preform forword elimination</span>
+
+<span class="comment">%set up system size based on length of b</span>
+nref=length(b);
+
+<span class="comment">%concat A and b into 1 matrix</span>
+Awork=cat(2,A,b);
+<span class="keyword">for</span> ir1=2:nref   <span class="comment">%loop over rows starting at row 2</span>
+    <span class="keyword">for</span> ir2=ir1:nref <span class="comment">%loop to apply row operations</span>
+        <span class="comment">%multiplier of the variable we are attempting to eliminate</span>
+        fact=Awork(ir2,ir1-1); <span class="comment">%its ir-1 column of this row</span>
+        <span class="comment">%subtract previous row from current row times the factor</span>
+        Awork(ir2,:)=Awork(ir2,:)-fact/Awork(ir1-1,ir1-1).*Awork(ir1-1,:);
+    <span class="keyword">end</span> <span class="comment">%for</span>
+<span class="keyword">end</span> <span class="comment">%for</span>
+
+<span class="comment">%output</span>
+Out = Awork;
+
+<span class="keyword">end</span> <span class="comment">%function</span>
+
+<span class="keyword">function</span> x=backsub(A)
+
+<span class="comment">% This function performs back substitution on an upper triangular matrix that has</span>
+<span class="comment">% Note that B is assumed to be upper triangular at this point.</span>
+<span class="comment">% Sourced from Dr. Z</span>
+
+
+n=size(A,1);                   <span class="comment">%number of unknowns in the system</span>
+x=zeros(n,1);                  <span class="comment">%space in which to store our solution vector</span>
+x(n)=A(n,n+1)/A(n,n); <span class="comment">%finalized solution for last variable, resulting from upper triangular conversion</span>
+
+<span class="keyword">for</span> ir1=n-1:-1:1
+    x(ir1)=A(ir1,n+1);       <span class="comment">%assume we're only dealing with a single right-hand side here.</span>
+    fact=A(ir1,ir1);         <span class="comment">%diagonal element to be divided through doing subs for the ir2 row</span>
+    <span class="keyword">for</span> ic=ir1+1:n
+        x(ir1)=x(ir1)-A(ir1,ic)*x(ic);
+    <span class="keyword">end</span> <span class="comment">%for</span>
+    x(ir1)=x(ir1)/fact;      <span class="comment">%divide once at the end to minimize number of ops</span>
+<span class="keyword">end</span> <span class="comment">%for</span>
+
+<span class="keyword">end</span> <span class="comment">%function</span>
 </pre><pre class="codeoutput">Initial Matrix A|B = 
   Columns 1 through 7
 
@@ -211,6 +262,9 @@ MatLab_Results =
 
 </pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2020a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
+%Project 1
+%Problem 1 
+%Parts a -> d
 %This script preformes simple elimination for linear alegrbraic matrixcies 
 %Created by: Patrick Good with example code from Dr. Z
 
@@ -218,14 +272,16 @@ MatLab_Results =
 clc
 clear
 
-%Load test problem 1
+%Input Matrix
 load('testproblem.mat')
+%A = [80 -20 -20; -20 40 -20; -20 -20 130];
+%b = [20; 20; 20];
 
-%Forward substitution function
-Awork = forsub(A,b);
+%Forward elimination function
+Awork = forwordelim(A,b);
 
 %Back substitution function
-Final = backsub(Awork);
+Solution = backsub(Awork);
 
 %Matlab built in function 
 matlab = A\b;
@@ -233,21 +289,19 @@ matlab = A\b;
 %print results
 disp('Initial Matrix A|B = ')
 disp(cat(2,A,b)) %initial matrix
-
 disp('My_Results = ')
-disp(Final) %foward and back sub results
-
+disp(Solution) %foward and back sub results
 disp('MatLab_Results = ')
 disp(matlab) %matlab built in results
 
-%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
 %Lower Triangle Test Problem 
 
 %Load lower triangle test problem 
 load('lowertriang_testproblem.mat')
 
-%Forward substitution 
-LT_solution = forsub(L,bL);
+%Forward elimination 
+LT_solution = forwordelim(L,bL);
 LT_Final = LT_solution(:,9); %results
 
 %Matlab built in function 
@@ -256,16 +310,63 @@ LT_matlab = L\bL;
 %Print results
 disp('REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-Lower-Triangle SystemREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-')
 disp(' ')
-
 disp('Initial Matrix L|bL = ')
 disp(cat(2,L,bL)) %initial matrix
-
 disp('LT_My_Results = ')
 disp(LT_Final)
-
 disp('MatLab_Results = ')
 disp(LT_matlab) %matlab built in results
 
+% functions
+function Out = forwordelim(A,b)
+
+% This function preforms forword elimination
+% Created by Patrick Good based on Dr. Zettergren's simple elimination
+%example cdoe
+% Inputs: forwordelim('A matrix', 'b matrix')
+
+%preform forword elimination
+
+%set up system size based on length of b
+nref=length(b);
+
+%concat A and b into 1 matrix
+Awork=cat(2,A,b);
+for ir1=2:nref   %loop over rows starting at row 2
+    for ir2=ir1:nref %loop to apply row operations
+        %multiplier of the variable we are attempting to eliminate
+        fact=Awork(ir2,ir1-1); %its ir-1 column of this row
+        %subtract previous row from current row times the factor
+        Awork(ir2,:)=Awork(ir2,:)-fact/Awork(ir1-1,ir1-1).*Awork(ir1-1,:);
+    end %for
+end %for
+
+%output
+Out = Awork;
+
+end %function
+
+function x=backsub(A)
+
+% This function performs back substitution on an upper triangular matrix that has 
+% Note that B is assumed to be upper triangular at this point.
+% Sourced from Dr. Z 
+
+
+n=size(A,1);                   %number of unknowns in the system
+x=zeros(n,1);                  %space in which to store our solution vector
+x(n)=A(n,n+1)/A(n,n); %finalized solution for last variable, resulting from upper triangular conversion
+
+for ir1=n-1:-1:1
+    x(ir1)=A(ir1,n+1);       %assume we're only dealing with a single right-hand side here.
+    fact=A(ir1,ir1);         %diagonal element to be divided through doing subs for the ir2 row
+    for ic=ir1+1:n
+        x(ir1)=x(ir1)-A(ir1,ic)*x(ic);
+    end %for
+    x(ir1)=x(ir1)/fact;      %divide once at the end to minimize number of ops
+end %for
+
+end %function
 
 
 
