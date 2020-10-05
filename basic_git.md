@@ -104,19 +104,37 @@ from the local directory on your computer containing the cloned repo.
 
 If a ```git push``` fails you will need to first ```git pull``` the remote work, which will be *merged* with your existing changes.  Provided that you have not edited any lines of code locally that have been changed in the remote repo, this merge will be automatic and the result will contain all changes from both the local and remote repos.  
 
-If you have changed the same line of code as has been changed on the remote, then you will be given a notification that you need to resolve this *merge conflict* manually.  The offending file(s) will be marked on lines that have a conflict so that you can easily search for them, e.g. the source file will have content that looks something like:
+If you have changed the same line of code as has been changed on the remote, then you will be given a notification that you need to resolve this *merge conflict* manually.  The offending file(s) will be marked on lines that have a conflict so that you can easily search for them.  In the case of the merge conflict git will give you a warning that outlines which files it could not automerge:
 
 ```zsh
-SHOW EXAMPLE HERE
+Auto-merging README.md
+CONFLICT (content): Merge conflict in README.md
+Automatic merge failed; fix conflicts and then commit the result.
 ```
 
-Effectively you will need to choose either of the conflicting options (by deleting the rest) or you will need to manually combine them.  Once you are done editing the source code file, from the command line you will need to add the file back to the repo to tell git that you have manually resolved the conflict:
+These conflicts have to be manually resolved.  If you open the offending file (in the case above README.md) the merge conflict will be marked for you by text similar to:
+
+```zsh
+<<<<<<< HEAD
+## Codes for FA2020 semester
+=======
+## Codes current as of FA2020 semester
+>>>>>>> mergedemo2
+```
+
+The line(s) above the ```=======``` are the lines in your current copy of the code, while the lines following this are the lines you are attempting to merge into this copy.  Effectively you will need to choose either of the conflicting options (by deleting the rest) or you will need to manually combine them.  Once you are done editing the source code file, from the command line you will need to add the file back to the repo to tell git that you have manually resolved the conflict:
 
 ```zsh
 git add filename.{py,m}
 ```
 
-There are additional ways to effectively merge codes (i.e. ```git rebase```), but we will not use or cover those in this course.  
+You can now commit the results to finish resolving the conflicted merge that you began:
+
+```zsh
+git commit -am "resolve README merge conflict"
+```
+
+Note that there are additional ways to effectively merge codes (i.e. ```git rebase```) that may be more appropriate than ```git merge``` in some situations, but we will not use or cover those in this course.  
 
 
 ## Merging the upstream repo into your local copy
