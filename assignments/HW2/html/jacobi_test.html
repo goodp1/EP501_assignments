@@ -1,0 +1,695 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>jacobi_test</title><meta name="generator" content="MATLAB 9.8"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-10-09"><meta name="DC.source" content="jacobi_test.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">%Project 2</span>
+<span class="comment">%Problem 2</span>
+<span class="comment">%Parts a -&gt; d</span>
+<span class="comment">%This script demos iteration with successive over-relaxation</span>
+<span class="comment">%Created by: Patrick Good based on code provided from Dr. Z</span>
+clc
+clear
+
+<span class="comment">%inputs</span>
+load(<span class="string">'iterative_testproblem.mat'</span>)
+
+<span class="comment">%initial guess</span>
+x0 = zeros(50);
+x0 = x0(:,1);
+
+<span class="comment">%-----------Standard Gauss-Seidel----------------</span>
+<span class="comment">%relaxation factor</span>
+omega = 1.0;
+
+<span class="comment">%converge criteria</span>
+tol = 10E-6;
+
+<span class="comment">%send to SOR function</span>
+[x,nit]=SOR(x0,Ait,bit,omega,tol);
+
+<span class="comment">%matlab solution</span>
+m = Ait\bit;
+
+<span class="comment">%-----------High Relaxation Param ----------------</span>
+<span class="comment">%relaxation factor</span>
+omega2 = 1.11;
+
+<span class="comment">%converge criteria</span>
+tol2 = 10E-6;
+
+<span class="comment">%send to SOR function</span>
+[x2,nit2]=SOR(x0,Ait,bit,omega2,tol2);
+
+<span class="comment">%matlab solution</span>
+m2 = Ait\bit;
+
+<span class="comment">%-----------Optimal Relaxation Param ----------------</span>
+<span class="comment">%relaxation factor</span>
+omega3 = 1.03;
+
+<span class="comment">%converge criteria</span>
+tol3 = 10E-6;
+
+<span class="comment">%send to SOR function</span>
+[x3,nit3]=SOR(x0,Ait,bit,omega3,tol3);
+
+<span class="comment">%optimal vs standard</span>
+diff = nit-nit3;
+
+<span class="comment">%matlab solution</span>
+m3 = Ait\bit;
+
+<span class="comment">%display results</span>
+disp(<span class="string">'-------- Standard Gauss-Seidel -------- '</span>)
+disp(<span class="string">'Matlab x = '</span>)
+disp(m)
+disp(<span class="string">'x = '</span>)
+disp(x)
+fprintf(<span class="string">'Iterations = %d \n'</span>,nit)
+fprintf(<span class="string">'Omega = %.2f \n'</span>,omega)
+fprintf(<span class="string">'Tolerance = %.2d \n\n'</span>,tol)
+
+disp(<span class="string">'-------- High Relaxation Param -------- '</span>)
+disp(<span class="string">'Matlab x = '</span>)
+disp(m2)
+disp(<span class="string">'x = '</span>)
+disp(x2)
+fprintf(<span class="string">'Iterations = %d \n'</span>,nit2)
+fprintf(<span class="string">'Omega = %.2f \n'</span>,omega2)
+fprintf(<span class="string">'Tolerance = %.2d \n\n'</span>,tol2)
+
+disp(<span class="string">'-------- Optimal Relaxation Param -------- '</span>)
+disp(<span class="string">'Matlab x = '</span>)
+disp(m3)
+disp(<span class="string">'x = '</span>)
+disp(x3)
+fprintf(<span class="string">'Iterations = %d \n'</span>,nit3)
+fprintf(<span class="string">'Omega = %.2f \n'</span>,omega3)
+fprintf(<span class="string">'Tolerance = %.2d \n'</span>,tol3)
+fprintf(<span class="string">'Saved %d iterations\n'</span>,diff)
+
+
+
+<span class="keyword">function</span> [x,nit]=SOR(x0,A,b,omega,tol,verbose)
+
+<span class="comment">%Modified from Dr. Z's Jacobi function and Program 1.4 in</span>
+<span class="comment">% Hoffman textbook</span>
+<span class="comment">%This function is an iterative solver that preforms</span>
+<span class="comment">% successive over relaxation</span>
+
+<span class="comment">% Check the inputs</span>
+narginchk(3,6);
+<span class="keyword">if</span> nargin&lt;5
+    tol=1e-6;
+<span class="keyword">end</span> <span class="comment">%if</span>
+<span class="keyword">if</span> nargin&lt;6
+    verbose=false;
+<span class="keyword">end</span> <span class="comment">%if</span>
+
+<span class="comment">% Setup iterations</span>
+maxit=100;    <span class="comment">%max number of iterations</span>
+n=size(A,1);  <span class="comment">%system size</span>
+residual=10*ones(n,1);
+difftot=1e3+tol;   <span class="comment">%max sure we enter iterations</span>
+x=x0;
+
+<span class="comment">% Perform iterations</span>
+it=1;
+<span class="keyword">while</span>(difftot&gt;tol &amp;&amp; it&lt;=maxit)
+    difftotprev=difftot;
+    resprev=residual;
+    xprev=x;
+    <span class="keyword">for</span> i=1:n
+        residual(i)=b(i);
+        <span class="keyword">for</span> j=1:n
+            residual(i)=residual(i)-A(i,j)*xprev(j);
+        <span class="keyword">end</span> <span class="comment">%for</span>
+        x(i)=xprev(i)+omega*residual(i)/A(i,i); <span class="comment">%omega</span>
+    <span class="keyword">end</span> <span class="comment">%for</span>
+    difftot=sum(abs(residual-resprev));
+
+    <span class="keyword">if</span> (verbose)
+        fprintf(<span class="string">'x= '</span>);
+        <span class="keyword">for</span> i=1:n
+            fprintf(<span class="string">'%f   '</span>,x(i));
+        <span class="keyword">end</span> <span class="comment">%for</span>
+        fprintf(<span class="string">'\n'</span>);
+        fprintf(<span class="string">'it=%d; difftot = %e\n'</span>,it,difftot);
+    <span class="keyword">end</span> <span class="comment">%if</span>
+
+    <span class="keyword">if</span> (difftot&gt;difftotprev &amp;&amp; it&gt;2)
+        error(<span class="string">'Solution appears to be diverging, check diagonal dominance...'</span>)
+    <span class="keyword">end</span> <span class="comment">%if</span>
+    it=it+1;
+<span class="keyword">end</span> <span class="comment">%while</span>
+
+nit=it-1;
+<span class="keyword">if</span> (nit==maxit)
+    warning(<span class="string">'Solution may not have converged fully...'</span>)
+<span class="keyword">end</span> <span class="comment">%if</span>
+
+<span class="keyword">end</span> <span class="comment">%function</span>
+</pre><pre class="codeoutput">-------- Standard Gauss-Seidel -------- 
+Matlab x = 
+    0.0329
+    0.1316
+    0.2400
+    0.3375
+    0.4142
+    0.4642
+    0.4839
+    0.4720
+    0.4293
+    0.3584
+    0.2641
+    0.1526
+    0.0310
+   -0.0926
+   -0.2101
+   -0.3138
+   -0.3971
+   -0.4544
+   -0.4819
+   -0.4780
+   -0.4427
+   -0.3785
+   -0.2896
+   -0.1817
+   -0.0619
+    0.0619
+    0.1817
+    0.2896
+    0.3785
+    0.4427
+    0.4780
+    0.4819
+    0.4544
+    0.3971
+    0.3138
+    0.2101
+    0.0926
+   -0.0310
+   -0.1526
+   -0.2641
+   -0.3584
+   -0.4293
+   -0.4720
+   -0.4839
+   -0.4642
+   -0.4142
+   -0.3375
+   -0.2400
+   -0.1316
+   -0.0329
+
+x = 
+    0.0329
+    0.1316
+    0.2400
+    0.3375
+    0.4142
+    0.4642
+    0.4839
+    0.4720
+    0.4293
+    0.3584
+    0.2641
+    0.1526
+    0.0310
+   -0.0926
+   -0.2101
+   -0.3138
+   -0.3971
+   -0.4544
+   -0.4819
+   -0.4780
+   -0.4427
+   -0.3785
+   -0.2896
+   -0.1817
+   -0.0619
+    0.0619
+    0.1817
+    0.2896
+    0.3785
+    0.4427
+    0.4780
+    0.4819
+    0.4544
+    0.3971
+    0.3138
+    0.2101
+    0.0926
+   -0.0310
+   -0.1526
+   -0.2641
+   -0.3584
+   -0.4293
+   -0.4720
+   -0.4839
+   -0.4642
+   -0.4142
+   -0.3375
+   -0.2400
+   -0.1316
+   -0.0329
+
+Iterations = 22 
+Omega = 1.00 
+Tolerance = 1.00e-05 
+
+-------- High Relaxation Param -------- 
+Matlab x = 
+    0.0329
+    0.1316
+    0.2400
+    0.3375
+    0.4142
+    0.4642
+    0.4839
+    0.4720
+    0.4293
+    0.3584
+    0.2641
+    0.1526
+    0.0310
+   -0.0926
+   -0.2101
+   -0.3138
+   -0.3971
+   -0.4544
+   -0.4819
+   -0.4780
+   -0.4427
+   -0.3785
+   -0.2896
+   -0.1817
+   -0.0619
+    0.0619
+    0.1817
+    0.2896
+    0.3785
+    0.4427
+    0.4780
+    0.4819
+    0.4544
+    0.3971
+    0.3138
+    0.2101
+    0.0926
+   -0.0310
+   -0.1526
+   -0.2641
+   -0.3584
+   -0.4293
+   -0.4720
+   -0.4839
+   -0.4642
+   -0.4142
+   -0.3375
+   -0.2400
+   -0.1316
+   -0.0329
+
+x = 
+    0.0329
+    0.1316
+    0.2400
+    0.3375
+    0.4142
+    0.4642
+    0.4839
+    0.4720
+    0.4293
+    0.3584
+    0.2641
+    0.1526
+    0.0310
+   -0.0926
+   -0.2101
+   -0.3138
+   -0.3971
+   -0.4544
+   -0.4819
+   -0.4780
+   -0.4427
+   -0.3785
+   -0.2896
+   -0.1817
+   -0.0619
+    0.0619
+    0.1817
+    0.2896
+    0.3785
+    0.4427
+    0.4780
+    0.4819
+    0.4544
+    0.3971
+    0.3138
+    0.2101
+    0.0926
+   -0.0310
+   -0.1526
+   -0.2641
+   -0.3584
+   -0.4293
+   -0.4720
+   -0.4839
+   -0.4642
+   -0.4142
+   -0.3375
+   -0.2400
+   -0.1316
+   -0.0329
+
+Iterations = 23 
+Omega = 1.11 
+Tolerance = 1.00e-05 
+
+-------- Optimal Relaxation Param -------- 
+Matlab x = 
+    0.0329
+    0.1316
+    0.2400
+    0.3375
+    0.4142
+    0.4642
+    0.4839
+    0.4720
+    0.4293
+    0.3584
+    0.2641
+    0.1526
+    0.0310
+   -0.0926
+   -0.2101
+   -0.3138
+   -0.3971
+   -0.4544
+   -0.4819
+   -0.4780
+   -0.4427
+   -0.3785
+   -0.2896
+   -0.1817
+   -0.0619
+    0.0619
+    0.1817
+    0.2896
+    0.3785
+    0.4427
+    0.4780
+    0.4819
+    0.4544
+    0.3971
+    0.3138
+    0.2101
+    0.0926
+   -0.0310
+   -0.1526
+   -0.2641
+   -0.3584
+   -0.4293
+   -0.4720
+   -0.4839
+   -0.4642
+   -0.4142
+   -0.3375
+   -0.2400
+   -0.1316
+   -0.0329
+
+x = 
+    0.0329
+    0.1316
+    0.2400
+    0.3375
+    0.4142
+    0.4642
+    0.4839
+    0.4720
+    0.4293
+    0.3584
+    0.2641
+    0.1526
+    0.0310
+   -0.0926
+   -0.2101
+   -0.3138
+   -0.3971
+   -0.4544
+   -0.4819
+   -0.4780
+   -0.4427
+   -0.3785
+   -0.2896
+   -0.1817
+   -0.0619
+    0.0619
+    0.1817
+    0.2896
+    0.3785
+    0.4427
+    0.4780
+    0.4819
+    0.4544
+    0.3971
+    0.3138
+    0.2101
+    0.0926
+   -0.0310
+   -0.1526
+   -0.2641
+   -0.3584
+   -0.4293
+   -0.4720
+   -0.4839
+   -0.4642
+   -0.4142
+   -0.3375
+   -0.2400
+   -0.1316
+   -0.0329
+
+Iterations = 21 
+Omega = 1.03 
+Tolerance = 1.00e-05 
+Saved 1 iterations
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2020a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%Project 2
+%Problem 2 
+%Parts a -> d
+%This script demos iteration with successive over-relaxation  
+%Created by: Patrick Good based on code provided from Dr. Z
+clc
+clear
+
+%inputs
+load('iterative_testproblem.mat')
+
+%initial guess 
+x0 = zeros(50);
+x0 = x0(:,1); 
+
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-Standard Gauss-SeidelREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%relaxation factor
+omega = 1.0;
+
+%converge criteria
+tol = 10E-6;
+
+%send to SOR function
+[x,nit]=SOR(x0,Ait,bit,omega,tol);
+
+%matlab solution
+m = Ait\bit;
+
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-High Relaxation Param REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%relaxation factor
+omega2 = 1.11;
+
+%converge criteria
+tol2 = 10E-6;
+
+%send to SOR function
+[x2,nit2]=SOR(x0,Ait,bit,omega2,tol2);
+
+%matlab solution
+m2 = Ait\bit;
+
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-Optimal Relaxation Param REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%relaxation factor
+omega3 = 1.03;
+
+%converge criteria
+tol3 = 10E-6;
+
+%send to SOR function
+[x3,nit3]=SOR(x0,Ait,bit,omega3,tol3);
+
+%optimal vs standard
+diff = nit-nit3;
+
+%matlab solution
+m3 = Ait\bit;
+
+%display results
+disp('REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH Standard Gauss-Seidel REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH ')
+disp('Matlab x = ')
+disp(m)
+disp('x = ')
+disp(x)
+fprintf('Iterations = %d \n',nit)
+fprintf('Omega = %.2f \n',omega)
+fprintf('Tolerance = %.2d \n\n',tol)
+
+disp('REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH High Relaxation Param REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH ')
+disp('Matlab x = ')
+disp(m2)
+disp('x = ')
+disp(x2)
+fprintf('Iterations = %d \n',nit2)
+fprintf('Omega = %.2f \n',omega2)
+fprintf('Tolerance = %.2d \n\n',tol2)
+
+disp('REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH Optimal Relaxation Param REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH ')
+disp('Matlab x = ')
+disp(m3)
+disp('x = ')
+disp(x3)
+fprintf('Iterations = %d \n',nit3)
+fprintf('Omega = %.2f \n',omega3)
+fprintf('Tolerance = %.2d \n',tol3)
+fprintf('Saved %d iterations\n',diff)
+
+
+
+function [x,nit]=SOR(x0,A,b,omega,tol,verbose)
+
+%Modified from Dr. Z's Jacobi function and Program 1.4 in 
+% Hoffman textbook 
+%This function is an iterative solver that preforms
+% successive over relaxation
+ 
+% Check the inputs
+narginchk(3,6);
+if nargin<5
+    tol=1e-6;
+end %if
+if nargin<6
+    verbose=false;
+end %if
+
+% Setup iterations
+maxit=100;    %max number of iterations
+n=size(A,1);  %system size
+residual=10*ones(n,1);
+difftot=1e3+tol;   %max sure we enter iterations
+x=x0;
+
+% Perform iterations
+it=1;
+while(difftot>tol && it<=maxit)
+    difftotprev=difftot;
+    resprev=residual;
+    xprev=x;
+    for i=1:n
+        residual(i)=b(i);
+        for j=1:n
+            residual(i)=residual(i)-A(i,j)*xprev(j); 
+        end %for
+        x(i)=xprev(i)+omega*residual(i)/A(i,i); %omega
+    end %for
+    difftot=sum(abs(residual-resprev));
+    
+    if (verbose)
+        fprintf('x= ');
+        for i=1:n
+            fprintf('%f   ',x(i));
+        end %for
+        fprintf('\n');
+        fprintf('it=%d; difftot = %e\n',it,difftot);
+    end %if
+    
+    if (difftot>difftotprev && it>2)
+        error('Solution appears to be diverging, check diagonal dominance...')
+    end %if
+    it=it+1;
+end %while
+
+nit=it-1;
+if (nit==maxit)
+    warning('Solution may not have converged fully...')
+end %if
+
+end %function
+
+##### SOURCE END #####
+--></body></html>

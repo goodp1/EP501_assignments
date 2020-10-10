@@ -63,7 +63,7 @@ function [U,L] = LUfact(A)
 % This function preforms forword elimination
 % Created by Patrick Good based on Dr. Zettergren's simple elimination
 %example cdoe
-% Inputs: forwordelim('A matrix', 'b matrix')
+%
 
 %preform forword elimination
 
