@@ -1,21 +1,21 @@
 function [root,it,success]=newton_approx(f,x0,maxit,tol,verbose)
 
-% root=newton_exact(f,fprime)
+% root=newton_approx(f,x0)
 %
 % finds a set of roots corresponding to the function f (input as a handle)
-% given a function which computes the derivative
+% approximates the derrivitive 
 
 % Error checking of input and setting of default values
-% narginchk(3,6);   %check for correct number of inputs to function
-% if (nargin<4)
-%     maxit=100;       %maximum number of iterations allowed
-% end %if
-% if (nargin<5)
-%     tol=1e-6;        %how close to zero we need to get to cease iterations
-% end %if
-% if (nargin<6)
-%     verbose=false;
-% end %if
+narginchk(3,5);   %check for correct number of inputs to function
+if (nargin<3)
+    maxit=100;       %maximum number of iterations allowed
+end %if
+if (nargin<4)
+    tol=1e-6;        %how close to zero we need to get to cease iterations
+end %if
+if (nargin<5)
+    verbose=false;
+end %if
 
 
 % Make sure we don't start at an inflection point with zero derivative
