@@ -1,18 +1,18 @@
 function [rootx,rooty,it,success]=newton2D_exact(f,gradf,g,gradg,x0,y0,maxit,tol,verbose)
 
 % root=newton_exact(f,fprime)
-%
+% Code from Dr. Z
 % finds a set of roots corresponding to the function f,g (input as a handle)
 % given a function which computes the derivative
 % 
 % requires:  Gauss_elim.m and backsub.m
 
 
-%% Need access to linear algebra routines for solves at each iteration
-addpath ../linear_algebra;
+% Need access to linear algebra routines for solves at each iteration
+%addpath ../linear_algebra;
 
 
-%% Error checking of input
+% Error checking of input
 narginchk(6,9);   %check for correct number of inputs to function
 if (nargin<7)
     maxit=100;       %maximum number of iterations allowed
@@ -25,7 +25,7 @@ if (nargin<9)
 end %if
 
 
-%% Make sure we don't start at an inflection point with zero derivative
+% Make sure we don't start at an inflection point with zero derivative
 [gradfx,gradfy]=gradf(x0,y0);
 [gradgx,gradgy]=gradg(x0,y0);
 if (abs(min([gradfx,gradfy,gradgx,gradgy]))<tol)    %this needs to really check inflection vs. saddle point; will fix later
@@ -53,11 +53,11 @@ while(~converged && it<=maxit)
     dxvec=backsub(Amod(ord,:));
     detA=prod(diag(Amod(ord,1:2)));
     if (abs(detA) < 1e-6)
-%         disp(A);
-%         disp(rootx)
-%         disp(rooty);
-%         disp(fval);
-%         disp(gval);
+        disp(A);
+        disp(rootx);
+        disp(rooty);
+        disp(fval);
+        disp(gval);
         error(' Ended up at a point where Newton iteration is singular, try a different starting point')
     end %if
     

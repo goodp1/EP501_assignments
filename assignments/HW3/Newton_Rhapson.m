@@ -7,14 +7,14 @@ clc
 
 %% Params for Newton iteration
 maxit=100;       %maximum number of iterations allowed
-minx=-6;
-maxx=2*pi;
+minx=0.5;
+maxx=5;
 tol=1e-9;        %how close to zero we need to get to cease iterations
 
 
 %% Objective function defs.
-f=@objfun2;      %set the function for which we are finding roots, change to illustrate different problems
-fprime=@objfun2_deriv;
+f=@objfun4;      %set the function for which we are finding roots, change to illustrate different problems
+fprime=@objfun4_deriv;
 x=linspace(minx,maxx,64);   %grid for basic plotting purposes
 ygrid=f(x);
 verbose=true;
@@ -31,7 +31,7 @@ axis tight;
 
 %% Newton-Rhapson root-finding method
 verbose=true;
-[xNewton,itNew,flag]=newton_exact(f,fprime,-5*i,100,tol,verbose);
+[xNewton,itNew,flag]=newton_exact(f,fprime,0,1000,tol,verbose);
 disp('Root value through Newton method:  ');
 disp(xNewton);
 disp('Number of iterations required to reach tolerance:  ');

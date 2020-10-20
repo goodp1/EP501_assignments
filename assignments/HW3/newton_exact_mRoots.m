@@ -1,21 +1,21 @@
-function [root,it,success]=newton_exact(f,fprime,x0,maxit,tol,verbose)
+function [root,it,success]=newton_exact_mRoots(f,fprime,x0,m,maxit,tol,verbose)
 
 % root=newton_exact(f,fprime)
-% Code from Dr. Z
+%
 % finds a set of roots corresponding to the function f (input as a handle)
 % given a function which computes the derivative
 
 %% Error checking of input and setting of default values
-narginchk(3,6);   %check for correct number of inputs to function
-if (nargin<4)
-    maxit=100;       %maximum number of iterations allowed
-end %if
-if (nargin<5)
-    tol=1e-6;        %how close to zero we need to get to cease iterations
-end %if
-if (nargin<6)
-    verbose=false;
-end %if
+% narginchk(3,6);   %check for correct number of inputs to function
+% if (nargin<4)
+%     maxit=100;       %maximum number of iterations allowed
+% end %if
+% if (nargin<5)
+%     tol=1e-6;        %how close to zero we need to get to cease iterations
+% end %if
+% if (nargin<6)
+%     verbose=false;
+% end %if
 
 
 %% Make sure we don't start at an inflection point with zero derivative
@@ -37,7 +37,7 @@ while(~converged && it<=maxit)
         warning(' Derivative close to zero, terminating iterations with failed convergence... ');
         break;
     else
-        root=root-fval./derivative;    % update root estimate
+        root=root-m*  fval./derivative;    % update root estimate
         fval=f(root);                  % see how far off we are from zero...
         if (verbose)
             fprintf(' iteration: %d; root:  %f + %f i; function value: %f, derivative:  %f \n',it,real(root),imag(root),fval,derivative);
