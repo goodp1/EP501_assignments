@@ -1,28 +1,28 @@
-%HW 3
-%P2 
-%part b
-%Created By: Patrick Good with source code from Dr. Z
-%This script finds roots for non-linear functions with imaginary roots
-%implies polynomial defaltion 
-%aprroximates the derivitive 
-
+% EP501 Midterm
+% P3 
+% parts c -> e
+% Created By: Patrick Good with source code from Dr. Z
+% This script finds roots for the given polynomial in the problem and 
+%covers parts c through e
+ 
 %clear the workspace
 clear
 clc
 
-% Params for Newton iteration
+%Params for Newton iteration
 maxit=100; %maximum number of iterations allowed
 minx=0;
-maxx=2;
+maxx=5.5;
 tol=1e-9;  %how close to zero we need to get to cease iterations
 verbose=true;
 
-% polynomial function coef.
-f=[1 -3 4 -2]; %set the function for which we are finding roots, change to illustrate different problems
+%polynomial function coef.
+f=[1 -15 85 -225 274 -120]; %set the function for which we are finding roots, change to illustrate different problems
 
-x0=[0.5 1i 1i]; %the function has imaginary roots so adding imaginary guesses 
+%initial guess
+x0=0.5; 
 
-% Plot the function we are finding roots for
+%Plot the function we are finding roots for
 x=minx:0.01:maxx;
 ygrid=zeros(1,length(x));
 for k=1:length(x)
@@ -36,10 +36,10 @@ xlabel('x')
 ylabel('y')
 axis tight;
 
-xNewton = zeros(1,length(f)-1);
-for k=1:length(f)-1 %loop to apply polynomial deflation 
+xNewton = zeros(1,length(f)-3);
+for k=1:length(f)-3 %loop to apply polynomial deflation 
 %Get root
-[xNewton(k),itNew,flag]=newton_approx_allRoots(f,x0(k),100,tol,verbose);
+[xNewton(k),itNew,flag]=newton_approx_allRoots(f,x0,100,tol,verbose);
 disp('Number of iterations required to reach tolerance:  ');
 disp(itNew);
 
@@ -50,6 +50,13 @@ disp(xNewton);
 f = polydivide(f,xNewton(k)); %deflate based on prev root 
 
 end %for 
+
+%solve final 2 roots with quadratic solver
+froots = quadsolve(f);
+
+%final outputs;
+disp('Last 2 roots solved by quadratic equation:')
+disp(froots)
 
 function [root,it,success]=newton_approx_allRoots(f,x0,maxit,tol,verbose)
 
@@ -124,4 +131,20 @@ end %for
 P = b; %output
 end %for
 
+function roots = quadsolve(T)
+% roots = quadsolve(T)
+% This function solves a quadratic equation and outputs the roots
+% T - [a b c] input coefficients matrix
+% ex: x^2+2x+3 T = [1 2 3]
+% Created by: Patrick Good
 
+%pull coefficents from input matrix
+a = T(1);
+b = T(2);
+c = T(3);
+
+%solve quadratic equation 
+roots(1) = (-b+sqrt(b^2-4*a*c))/(2*a);
+roots(2) = (-b-sqrt(b^2-4*a*c))/(2*a);
+
+end %function   

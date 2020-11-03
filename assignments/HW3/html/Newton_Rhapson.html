@@ -1,0 +1,222 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Newton_Rhapson</title><meta name="generator" content="MATLAB 9.9"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-10-21"><meta name="DC.source" content="Newton_Rhapson.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% EP501 Midterm</span>
+<span class="comment">% P2</span>
+<span class="comment">% part f</span>
+<span class="comment">% Created By: Patrick Good with source code from Dr. Z</span>
+<span class="comment">% This script uses newtons exact method to solve the given problem</span>
+<span class="comment">% requires:  fun?.m (set function pointer f to desired function at beginning of program)</span>
+clear
+clc
+
+<span class="comment">% Params for Newton iteration</span>
+maxit=100;       <span class="comment">%maximum number of iterations allowed</span>
+minx=-150;
+maxx=150;
+tol=1;        <span class="comment">%how close to zero we need to get to cease iterations</span>
+
+<span class="comment">% Objective function defs.</span>
+f=@fun1;      <span class="comment">%set the function for which we are finding roots, change to illustrate different problems</span>
+fprime=@fun1_deriv;
+x=linspace(minx,maxx,64);   <span class="comment">%grid for basic plotting purposes</span>
+ygrid=f(x);
+verbose=true;
+
+<span class="comment">% Plot the function we are finding roots for</span>
+figure(1);
+plot(x,ygrid);
+title(<span class="string">'Objective function'</span>)
+xlabel(<span class="string">'x'</span>)
+ylabel(<span class="string">'y'</span>)
+axis <span class="string">tight</span>;
+grid <span class="string">on</span>
+
+<span class="comment">% Newton-Rhapson root-finding method</span>
+verbose=true;
+[xNewton,itNew,flag]=newton_exact(f,fprime,120,1000,tol,verbose);
+disp(<span class="string">'Root value through Newton method:  '</span>);
+disp(xNewton);
+disp(<span class="string">'Number of iterations required to reach tolerance:  '</span>);
+disp(itNew);
+</pre><pre class="codeoutput"> iteration: 1; root:  119.543645 + 0.000000 i; function value: 45735961342.916260, derivative:  150067725360.000000 
+ iteration: 2; root:  119.233046 + 0.000000 i; function value: 30689502196.570297, derivative:  147250585769.314941 
+ iteration: 3; root:  119.021915 + 0.000000 i; function value: 20660381363.454834, derivative:  145357646098.661926 
+ iteration: 4; root:  118.878522 + 0.000000 i; function value: 13939754099.714737, derivative:  144082120652.208862 
+ iteration: 5; root:  118.781191 + 0.000000 i; function value: 9419591099.964600, derivative:  143220969313.642639 
+ iteration: 6; root:  118.715153 + 0.000000 i; function value: 6371743031.591171, derivative:  142638810096.611969 
+ iteration: 7; root:  118.670359 + 0.000000 i; function value: 4313102885.026535, derivative:  142244903195.753906 
+ iteration: 8; root:  118.639980 + 0.000000 i; function value: 2920981207.843079, derivative:  141978211013.775330 
+ iteration: 9; root:  118.619381 + 0.000000 i; function value: 1978829900.318787, derivative:  141797573923.026031 
+ iteration: 10; root:  118.605413 + 0.000000 i; function value: 1340860706.436218, derivative:  141675189613.392700 
+ iteration: 11; root:  118.595944 + 0.000000 i; function value: 908706512.557541, derivative:  141592256598.385895 
+ iteration: 12; root:  118.589523 + 0.000000 i; function value: 615896231.321655, derivative:  141536050245.902740 
+ iteration: 13; root:  118.585171 + 0.000000 i; function value: 417466125.163147, derivative:  141497954060.505951 
+ iteration: 14; root:  118.582220 + 0.000000 i; function value: 282979602.732758, derivative:  141472131253.787384 
+ iteration: 15; root:  118.580219 + 0.000000 i; function value: 191823900.679947, derivative:  141454627026.861298 
+ iteration: 16; root:  118.578863 + 0.000000 i; function value: 130034798.012695, derivative:  141442761300.855469 
+ iteration: 17; root:  118.577944 + 0.000000 i; function value: 88150088.148056, derivative:  141434717639.872284 
+ iteration: 18; root:  118.577320 + 0.000000 i; function value: 59757191.966202, derivative:  141429264851.209259 
+ iteration: 19; root:  118.576898 + 0.000000 i; function value: 40509837.846817, derivative:  141425568380.418457 
+ iteration: 20; root:  118.576611 + 0.000000 i; function value: 27462039.608719, derivative:  141423062511.186615 
+ iteration: 21; root:  118.576417 + 0.000000 i; function value: 18616858.724258, derivative:  141421363754.295441 
+ iteration: 22; root:  118.576286 + 0.000000 i; function value: 12620626.616043, derivative:  141420212144.861969 
+ iteration: 23; root:  118.576196 + 0.000000 i; function value: 8555709.780991, derivative:  141419431452.413239 
+ iteration: 24; root:  118.576136 + 0.000000 i; function value: 5800047.960831, derivative:  141418902209.228577 
+ iteration: 25; root:  118.576095 + 0.000000 i; function value: 3931944.742828, derivative:  141418543426.994934 
+ iteration: 26; root:  118.576067 + 0.000000 i; function value: 2665529.033264, derivative:  141418300202.769958 
+ iteration: 27; root:  118.576048 + 0.000000 i; function value: 1807005.847870, derivative:  141418135317.107849 
+ iteration: 28; root:  118.576035 + 0.000000 i; function value: 1224999.145981, derivative:  141418023538.404236 
+ iteration: 29; root:  118.576027 + 0.000000 i; function value: 830447.291702, derivative:  141417947761.768219 
+ iteration: 30; root:  118.576021 + 0.000000 i; function value: 562974.080917, derivative:  141417896391.524658 
+ iteration: 31; root:  118.576017 + 0.000000 i; function value: 381649.550491, derivative:  141417861566.778168 
+ iteration: 32; root:  118.576014 + 0.000000 i; function value: 258726.628815, derivative:  141417837958.499359 
+ iteration: 33; root:  118.576012 + 0.000000 i; function value: 175395.123291, derivative:  141417821954.051208 
+ iteration: 34; root:  118.576011 + 0.000000 i; function value: 118903.299774, derivative:  141417811104.367065 
+ iteration: 35; root:  118.576010 + 0.000000 i; function value: 80606.545334, derivative:  141417803749.184021 
+ iteration: 36; root:  118.576010 + 0.000000 i; function value: 54644.532883, derivative:  141417798762.981781 
+ iteration: 37; root:  118.576009 + 0.000000 i; function value: 37044.447662, derivative:  141417795382.751373 
+ iteration: 38; root:  118.576009 + 0.000000 i; function value: 25113.054077, derivative:  141417793091.236420 
+ iteration: 39; root:  118.576009 + 0.000000 i; function value: 17024.561737, derivative:  141417791537.779846 
+ iteration: 40; root:  118.576009 + 0.000000 i; function value: 11541.236267, derivative:  141417790484.665466 
+ iteration: 41; root:  118.576009 + 0.000000 i; function value: 7823.998703, derivative:  141417789770.741516 
+ iteration: 42; root:  118.576009 + 0.000000 i; function value: 5304.020081, derivative:  141417789286.760559 
+ iteration: 43; root:  118.576009 + 0.000000 i; function value: 3595.684952, derivative:  141417788958.661652 
+ iteration: 44; root:  118.576009 + 0.000000 i; function value: 2437.575134, derivative:  141417788736.237915 
+ iteration: 45; root:  118.576008 + 0.000000 i; function value: 1652.473129, derivative:  141417788585.453094 
+ iteration: 46; root:  118.576008 + 0.000000 i; function value: 1120.239456, derivative:  141417788483.233490 
+ iteration: 47; root:  118.576008 + 0.000000 i; function value: 759.428909, derivative:  141417788413.937134 
+ iteration: 48; root:  118.576008 + 0.000000 i; function value: 514.829681, derivative:  141417788366.959991 
+ iteration: 49; root:  118.576008 + 0.000000 i; function value: 349.011230, derivative:  141417788335.113373 
+ iteration: 50; root:  118.576008 + 0.000000 i; function value: 236.600586, derivative:  141417788313.523956 
+ iteration: 51; root:  118.576008 + 0.000000 i; function value: 160.395782, derivative:  141417788298.888245 
+ iteration: 52; root:  118.576008 + 0.000000 i; function value: 108.735260, derivative:  141417788288.966400 
+ iteration: 53; root:  118.576008 + 0.000000 i; function value: 73.713669, derivative:  141417788282.240234 
+ iteration: 54; root:  118.576008 + 0.000000 i; function value: 49.971191, derivative:  141417788277.680420 
+ iteration: 55; root:  118.576008 + 0.000000 i; function value: 33.876602, derivative:  141417788274.589233 
+ iteration: 56; root:  118.576008 + 0.000000 i; function value: 22.965286, derivative:  141417788272.493713 
+ iteration: 57; root:  118.576008 + 0.000000 i; function value: 15.568802, derivative:  141417788271.073090 
+ iteration: 58; root:  118.576008 + 0.000000 i; function value: 10.554031, derivative:  141417788270.110077 
+ iteration: 59; root:  118.576008 + 0.000000 i; function value: 7.154999, derivative:  141417788269.457184 
+ iteration: 60; root:  118.576008 + 0.000000 i; function value: 4.850235, derivative:  141417788269.014587 
+ iteration: 61; root:  118.576008 + 0.000000 i; function value: 3.289047, derivative:  141417788268.714569 
+ iteration: 62; root:  118.576008 + 0.000000 i; function value: 2.229233, derivative:  141417788268.511200 
+ iteration: 63; root:  118.576008 + 0.000000 i; function value: 1.511398, derivative:  141417788268.373230 
+ iteration: 64; root:  118.576008 + 0.000000 i; function value: 1.024246, derivative:  141417788268.279785 
+ iteration: 65; root:  118.576008 + 0.000000 i; function value: 0.694397, derivative:  141417788268.216370 
+Root value through Newton method:  
+  118.5760
+
+Number of iterations required to reach tolerance:  
+    65
+
+</pre><img vspace="5" hspace="5" src="Newton_Rhapson_01.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2020b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+% EP501 Midterm
+% P2 
+% part f 
+% Created By: Patrick Good with source code from Dr. Z
+% This script uses newtons exact method to solve the given problem
+% requires:  fun?.m (set function pointer f to desired function at beginning of program)
+clear
+clc
+
+% Params for Newton iteration
+maxit=100;       %maximum number of iterations allowed
+minx=-150;
+maxx=150;
+tol=1;        %how close to zero we need to get to cease iterations
+
+% Objective function defs.
+f=@fun1;      %set the function for which we are finding roots, change to illustrate different problems
+fprime=@fun1_deriv;
+x=linspace(minx,maxx,64);   %grid for basic plotting purposes
+ygrid=f(x);
+verbose=true;
+
+% Plot the function we are finding roots for
+figure(1);
+plot(x,ygrid);
+title('Objective function')
+xlabel('x')
+ylabel('y')
+axis tight;
+grid on
+
+% Newton-Rhapson root-finding method
+verbose=true;
+[xNewton,itNew,flag]=newton_exact(f,fprime,120,1000,tol,verbose);
+disp('Root value through Newton method:  ');
+disp(xNewton);
+disp('Number of iterations required to reach tolerance:  ');
+disp(itNew);
+
+
+##### SOURCE END #####
+--></body></html>
