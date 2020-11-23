@@ -1,0 +1,222 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>search2D_script</title><meta name="generator" content="MATLAB 9.9"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-11-08"><meta name="DC.source" content="search2D_script.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% EP501</span>
+<span class="comment">% HW4</span>
+<span class="comment">% problem 2</span>
+<span class="comment">% part b</span>
+<span class="comment">% This script demos 2D serch function</span>
+<span class="comment">% Created by: Patrick Good</span>
+
+<span class="comment">%clear workspace</span>
+clc
+clear
+close <span class="string">all</span>
+
+<span class="comment">%load test problem</span>
+load(<span class="string">'test_interp.mat'</span>)
+x = xg;
+y = yg;
+
+<span class="comment">%measure x vector</span>
+sizex = length(xg);
+minx = min(xg);
+maxx = max(xg);
+
+<span class="comment">%measure y vector</span>
+sizey = length(xg);
+miny = min(xg);
+maxy = max(xg);
+
+
+<span class="comment">%input points</span>
+echeck = false;
+<span class="keyword">while</span> echeck == false <span class="comment">%loop untill input is withn range</span>
+
+prompt = [<span class="string">'Input x value between '</span> num2str(minx) <span class="string">' '</span> <span class="string">'and '</span> num2str(maxx) <span class="string">': '</span>]; <span class="comment">%input promt string</span>
+inpx = input(prompt);
+echeck = true;
+<span class="keyword">if</span> inpx &lt; minx || inpx &gt; maxx <span class="comment">%check if input is within range</span>
+
+    disp(<span class="string">'input not in range'</span>)
+    echeck = false; <span class="comment">%error determined continue in loop</span>
+
+<span class="keyword">end</span> <span class="comment">%if</span>
+
+<span class="keyword">end</span> <span class="comment">%while</span>
+
+echeck = false;
+<span class="keyword">while</span> echeck == false <span class="comment">%loop untill input is withn range</span>
+
+prompt = [<span class="string">'Input y value between '</span> num2str(miny) <span class="string">' '</span> <span class="string">'and '</span> num2str(maxy) <span class="string">': '</span>]; <span class="comment">%input promt string</span>
+inpy = input(prompt);
+echeck = true;
+<span class="keyword">if</span> inpy &lt; miny || inpy &gt; maxy <span class="comment">%check if input is within range</span>
+
+    disp(<span class="string">'input not in range'</span>)
+    echeck = false; <span class="comment">%error determined continue in loop</span>
+
+<span class="keyword">end</span> <span class="comment">%if</span>
+
+<span class="keyword">end</span> <span class="comment">%while</span>
+
+<span class="comment">%serch function</span>
+[indexlx, indexhx, indexly, indexhy] = search2D(inpx,inpy,x,y);
+
+<span class="comment">%output</span>
+outx = [<span class="string">'X Value between index '</span> num2str(indexlx) <span class="string">' '</span> <span class="string">'and '</span> num2str(indexhx)];
+disp(<span class="string">' '</span>)
+disp(outx)
+outy = [<span class="string">'Y Value between index '</span> num2str(indexly) <span class="string">' '</span> <span class="string">'and '</span> num2str(indexhy)];
+disp(<span class="string">' '</span>)
+disp(outy)
+</pre><pre class="codeoutput error">Error using input
+Cannot call INPUT from EVALC.
+
+Error in search2D_script (line 34)
+inpx = input(prompt);
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2020b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+% EP501
+% HW4 
+% problem 2
+% part b
+% This script demos 2D serch function 
+% Created by: Patrick Good
+
+%clear workspace
+clc
+clear
+close all
+
+%load test problem
+load('test_interp.mat')
+x = xg;
+y = yg;
+
+%measure x vector 
+sizex = length(xg);
+minx = min(xg);
+maxx = max(xg);
+
+%measure y vector 
+sizey = length(xg);
+miny = min(xg);
+maxy = max(xg);
+
+
+%input points
+echeck = false;
+while echeck == false %loop untill input is withn range
+    
+prompt = ['Input x value between ' num2str(minx) ' ' 'and ' num2str(maxx) ': ']; %input promt string
+inpx = input(prompt);
+echeck = true;
+if inpx < minx || inpx > maxx %check if input is within range 
+    
+    disp('input not in range')
+    echeck = false; %error determined continue in loop 
+    
+end %if
+
+end %while  
+
+echeck = false;
+while echeck == false %loop untill input is withn range
+    
+prompt = ['Input y value between ' num2str(miny) ' ' 'and ' num2str(maxy) ': ']; %input promt string
+inpy = input(prompt);
+echeck = true;
+if inpy < miny || inpy > maxy %check if input is within range 
+    
+    disp('input not in range')
+    echeck = false; %error determined continue in loop 
+    
+end %if
+
+end %while 
+
+%serch function
+[indexlx, indexhx, indexly, indexhy] = search2D(inpx,inpy,x,y);
+
+%output
+outx = ['X Value between index ' num2str(indexlx) ' ' 'and ' num2str(indexhx)];
+disp(' ')
+disp(outx)
+outy = ['Y Value between index ' num2str(indexly) ' ' 'and ' num2str(indexhy)];
+disp(' ')
+disp(outy)
+
+    
+    
+    
+    
+
+##### SOURCE END #####
+--></body></html>
