@@ -1,4 +1,7 @@
 %% Multidimensional function and partial derivatives:  grad and div (laplacian and curl also useful)
+clc
+clear
+close all
 lx=20;
 ly=20;
 x=linspace(-5,5,lx);
