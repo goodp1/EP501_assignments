@@ -9,12 +9,12 @@ clear
 close all
 
 %input parameters
-I = 100;
+I = 10;
 mu0 = 4*pi()*10^-7;
 a = 0.005;
 
 %sizing
-n = 25;
+n = 30;
 x = linspace(-3*a,3*a,n);
 y = linspace(-3*a,3*a,n);
 [X,Y] = meshgrid(x,y);
@@ -104,7 +104,7 @@ title('Curl')
 % colorbar
 
 
-
+save problem_1_Data
 
 
 
